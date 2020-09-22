@@ -1,0 +1,85 @@
+function entropyplotbimodal1(range1,range2)
+format long
+%Drawing isentropes for +-+ region of the third quadrant of the (mu,t)-plane: mu<t-2<-2
+%The ranges range1<=range2<=-2 are for the mu and we are interested only to
+%the part inside the parabola mu=1-t^2/4. Fixing a mu, to generate the
+%second component t, we divide the interval determined by
+%max(mu+2,-2*sqrt(1-mu))<=0 to 300 equal subintervals. 
+seed=linspace(range1,range2,300);
+%preallocating to increase the speed
+mu=zeros(300,300);
+t=zeros(300,300);
+sigma1=zeros(300,300);
+sigma2=zeros(300,300);
+entropyarray=zeros(300,300);
+%A 300*300 of points (mu,t) and the corresponding entropy values will be
+%generated. There are failure cases of the algorithm in entropybimodal1
+%where the output is the value -2. 
+for i=1:300
+    temp=linspace(max(seed(i)+2,-2*sqrt(1-seed(i))),0,300);
+    for j=1:300
+        mu(i,j)=seed(i);
+        t(i,j)=temp(j);
+        sigma1(i,j)=mu(i,j)-2+4/(mu(i,j))-t(i,j)^2/(mu(i,j));
+        sigma2(i,j)=(mu(i,j)+1/(mu(i,j)))*sigma1(i,j)-(mu(i,j)^2+2/(mu(i,j)));
+        entropyarray(i,j)=entropybimodal1(mu(i,j),t(i,j));
+    end
+end
+%First, plotting in the (mu,t)-plane.
+for i=1:300
+    for j=1:300
+        if entropyarray(i,j)==-2
+            plot(mu(i,j),t(i,j),'k.')
+            hold on
+        elseif 0<=entropyarray(i,j)&&entropyarray(i,j)<0.1
+            plot(mu(i,j),t(i,j),'b.')
+            hold on
+        elseif 0.1<=entropyarray(i,j)&&entropyarray(i,j)<0.25
+            plot(mu(i,j),t(i,j),'m.')
+            hold on
+        elseif 0.25<=entropyarray(i,j)&&entropyarray(i,j)<0.4
+            plot(mu(i,j),t(i,j),'g.')
+            hold on
+        elseif 0.4<=entropyarray(i,j)&&entropyarray(i,j)<0.5
+            plot(mu(i,j),t(i,j),'c.')
+            hold on
+        elseif 0.5<=entropyarray(i,j)&&entropyarray(i,j)<0.65
+            plot(mu(i,j),t(i,j),'y.')
+            hold on
+        else
+            plot(mu(i,j),t(i,j),'r.')
+            hold on
+        end
+    end
+end
+
+hold off
+figure
+%In the new figure we plot in the moduli space. 
+for i=1:300
+    for j=1:300
+        if entropyarray(i,j)==-2&&abs(sigma2(i,j))<25
+            plot(sigma1(i,j),sigma2(i,j),'k.')
+            hold on
+        elseif 0<=entropyarray(i,j)&&entropyarray(i,j)<0.1&&abs(sigma2(i,j))<25
+            plot(sigma1(i,j),sigma2(i,j),'b.')
+            hold on
+        elseif 0.1<=entropyarray(i,j)&&entropyarray(i,j)<0.25&&abs(sigma2(i,j))<25
+            plot(sigma1(i,j),sigma2(i,j),'m.')
+            hold on
+        elseif 0.25<=entropyarray(i,j)&&entropyarray(i,j)<0.4&&abs(sigma2(i,j))<25
+            plot(sigma1(i,j),sigma2(i,j),'g.')
+            hold on
+        elseif 0.4<=entropyarray(i,j)&&entropyarray(i,j)<0.5&&abs(sigma2(i,j))<25
+            plot(sigma1(i,j),sigma2(i,j),'c.')
+            hold on
+        elseif 0.5<=entropyarray(i,j)&&entropyarray(i,j)<0.65&&abs(sigma2(i,j))<25
+            plot(sigma1(i,j),sigma2(i,j),'y.')
+            hold on
+        elseif 0.65<=entropyarray(i,j)&&abs(sigma2(i,j))<25
+            plot(sigma1(i,j),sigma2(i,j),'r.')
+            hold on
+        end
+    end
+end
+
