@@ -1,2 +1,2 @@
 # Real-quadratic-rational-maps
-This codes are based on the papers of John Milnor.
+The project was motivated by the elegant paper of John Milnor on quadratic rational maps https://bit.ly/3623BqT
